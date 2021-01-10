@@ -1,0 +1,9 @@
+{
+  "env": {
+    "gui": {
+      "website": "https://www.propertypal.com/",
+      "northAtlanticOcean": {"longitude": 33.835506891911955, "latitude": -40.48246753195601},
+      "bt14": {"longitude": -5.9620314300430906, "latitude": 54.61680575513615}
+    }
+  }
+}
