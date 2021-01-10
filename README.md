@@ -43,6 +43,8 @@ pip3 install -U pytest-playwright
 
 ./runTestAndDisplayResults.sh -> will automatically run the tests and display the allure results
 
+### Aditonal libs
+There is the potability that playwright may ask you to install a couple of extra libs please follow the instructions for that
 
 ##Manual running info
 
