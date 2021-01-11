@@ -89,11 +89,11 @@ class PropertyPalHelpers:
         numOfPages = int((numOfPagesRes.split('(')[0].split(' of ')[-1]).strip())
         curPageNum = int((numOfPagesRes.split('(')[0].split(' of ')[0].split('Page ')[-1]).strip())
 
-        postCodeList = []
+        addressList = []
         while curPageNum <= numOfPages:
 
             handle = page.querySelector('.sr-widecol > ul:nth-child(1)')
-            postCodeList, curPageNum = self.processPage(handle, postCodeList, page)
+            addressList, curPageNum = self.processPage(handle, addressList, page)
 
             if curPageNum != numOfPages:
                 elemsnetHandle = page.querySelector('.paging-next')
@@ -103,6 +103,13 @@ class PropertyPalHelpers:
                 page.click('.paging-next')
             else:
                 break
+
+        assert int(numOfResults) == len(set(addressList))
+
+        postCodeList = []
+        for eachAddress in set(addressList):
+            postCodesBs4 = eachAddress.find('span', class_='text-ib')
+            postCodeList.append(postCodesBs4.text)
 
         postcodesFound = set(postCodeList)
 
@@ -117,25 +124,21 @@ class PropertyPalHelpers:
             assert len(postcodesFound) == 1
             assert postCodeList[0] == searchString
 
-        # Disabled because at the time of writing they were in fact returning more
-        # assert numOfResults == len(postCodeList)
 
-    def processPage(self, handle, postCodeList, page):
+
+    def processPage(self, handle, addressList, page):
         logger.debug(f'processPage')
         numOfPagesRes = page.innerText('.pgheader-currentpage')
         curPageNum = int((numOfPagesRes.split('(')[0].split(' of ')[0].split('Page ')[-1]).strip())
         logger.debug(f'processing page number {curPageNum}')
 
         soup = bs4(handle.innerHTML(), 'html.parser')
-        postCodesBs4 = soup.find_all('span', class_='text-ib')
-
-        for each in postCodesBs4:
-            postCodeList.append(each.text)
+        addressList.extend(soup.find_all('div', class_="propbox-details"))
 
         img = page.screenshot()
         allure.attach(img, f'topOfPage{curPageNum}.png')
 
-        return postCodeList, curPageNum
+        return addressList, curPageNum
 
 
 class TestBT14PropertiesAvailable:
