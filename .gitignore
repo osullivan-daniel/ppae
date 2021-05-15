@@ -2,4 +2,11 @@
 /.pytest_cache
 /.allure-reports
 /.allure-results
+/.allure-resultsC
+/.allure-resultsCF
+/.allure-resultsCFW
+/.testVidSave
+/.testVideoRecordings
+.allure-resultsC
+
 **/__pycache__

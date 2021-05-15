@@ -1,10 +1,8 @@
-import json
-import pytest
 import logging
-import subprocess
+import pytest
+import json
 
 log = logging.getLogger(__name__)
-
 
 def pytest_addoption(parser):
     parser.addoption('--env', action='store', default='config/dev.json')
@@ -20,3 +18,11 @@ def guiConfig(request, pytestconfig):
     config = cfg['env']['gui']
 
     return config
+
+
+@pytest.fixture(scope='session')
+def browser_context_args(browser_context_args):
+    return {
+        **browser_context_args,
+        "record_video_dir": "./.testVideoRecordings"
+    }

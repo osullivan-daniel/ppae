@@ -1,4 +1,3 @@
-import time
 import pytest
 import allure
 import logging
@@ -12,15 +11,15 @@ class PropertyPalHelpers:
     @allure.step('Setup fake geolocation')
     def geolocationSetup(self, context, geoDict):
         logger.debug('geolocationSetup')
-        context.setGeolocation(geoDict)
-        context.grantPermissions(['geolocation'])
-        return context.newPage()
+        context.set_geolocation(geoDict)
+        context.grant_permissions(['geolocation'])
+        return context.new_page()
 
     @allure.step('Navigate to home page')
     def navigateToHomePage(self, page, guiConfig):
         logger.debug('navigateToHomePage')
         page.goto(guiConfig['website'])
-        page.waitForLoadState('networkidle')
+        page.wait_for_load_state('networkidle')
         img = page.screenshot()
         allure.attach(img, 'homepage.png')
 
@@ -29,7 +28,7 @@ class PropertyPalHelpers:
         logger.debug('allowCookies')
         img = page.screenshot()
         allure.attach(img, 'wouldILikeCookies.png')
-        page.waitForLoadState('networkidle')
+        page.wait_for_load_state('networkidle')
         page.click('text=AGREE')
         img = page.screenshot()
         allure.attach(img, 'acceptedCookies.png')
@@ -64,10 +63,10 @@ class PropertyPalHelpers:
     @allure.step("Assert No Results")
     def assertNoResults(self, page):
         logger.debug('assertNoResults')
-        page.waitForSelector('.noresults-heading')
+        page.wait_for_selector('.noresults-heading')
         img = page.screenshot()
         allure.attach(img, 'noResults.png')
-        assert page.innerText('.noresults-heading') == 'SORRY, NO PROPERTIES FOUND'
+        assert page.inner_text('.noresults-heading') == 'SORRY, NO PROPERTIES FOUND'
 
     # you could possibly split this method in two one for my location and one for text, but you end up with duplication...
     @allure.step("Assert Results")
@@ -79,12 +78,12 @@ class PropertyPalHelpers:
         # Idealy anything your interacting with in automations tests will have an tag
         # as xpaths and selectors are always subject ot change
         if searchType == 'location':
-            assert page.innerText('div.maxwidth > h1:nth-child(1)') == f'PROPERTY FOR SALE NEAR MY LOCATION'
+            assert page.inner_text('div.maxwidth > h1:nth-child(1)') == f'PROPERTY FOR SALE NEAR MY LOCATION'
         elif searchType == 'text':
-            assert page.innerText('div.maxwidth > h1:nth-child(1)') == f'PROPERTY FOR SALE IN {searchString}'
+            assert page.inner_text('div.maxwidth > h1:nth-child(1)') == f'PROPERTY FOR SALE IN {searchString}'
 
-        numOfPagesRes = page.innerText('.pgheader-currentpage')
-        numOfResults = page.innerText('.pgheader-currentpage > em:nth-child(1)')
+        numOfPagesRes = page.inner_text('.pgheader-currentpage')
+        numOfResults = page.inner_text('.pgheader-currentpage > em:nth-child(1)')
 
         numOfPages = int((numOfPagesRes.split('(')[0].split(' of ')[-1]).strip())
         curPageNum = int((numOfPagesRes.split('(')[0].split(' of ')[0].split('Page ')[-1]).strip())
@@ -92,12 +91,12 @@ class PropertyPalHelpers:
         addressList = []
         while curPageNum <= numOfPages:
 
-            handle = page.querySelector('.sr-widecol > ul:nth-child(1)')
+            handle = page.query_selector('.sr-widecol > ul:nth-child(1)')
             addressList, curPageNum = self.processPage(handle, addressList, page)
 
             if curPageNum != numOfPages:
-                elemsnetHandle = page.querySelector('.paging-next')
-                elemsnetHandle.scrollIntoViewIfNeeded()
+                elemsnetHandle = page.query_selector('.paging-next')
+                elemsnetHandle.scroll_into_view_if_needed()
                 img = page.screenshot()
                 allure.attach(img, f'nextButtonPage{curPageNum}.png')
                 page.click('.paging-next')
@@ -128,11 +127,11 @@ class PropertyPalHelpers:
 
     def processPage(self, handle, addressList, page):
         logger.debug(f'processPage')
-        numOfPagesRes = page.innerText('.pgheader-currentpage')
+        numOfPagesRes = page.inner_text('.pgheader-currentpage')
         curPageNum = int((numOfPagesRes.split('(')[0].split(' of ')[0].split('Page ')[-1]).strip())
         logger.debug(f'processing page number {curPageNum}')
 
-        soup = bs4(handle.innerHTML(), 'html.parser')
+        soup = bs4(handle.inner_html(), 'html.parser')
         addressList.extend(soup.find_all('div', class_="propbox-details"))
 
         img = page.screenshot()
@@ -156,13 +155,11 @@ class TestBT14PropertiesAvailable:
 
 class TestBT6PropertiesAvailable:
 
-    # At the time of writting this i noticed a bug in this the number of results says 104 but
-    # there are infact 106 results (10 per page with 6 on the last)
     @allure.description("test search BT6")
     @pytest.mark.skip_browser("webkit")
     def testBT6PropertiesAvailable(self, guiConfig, context):
         pp = PropertyPalHelpers()
-        page = context.newPage()
+        page = context.new_page()
         pp.navigateToHomePage(page, guiConfig)
         pp.allowCookies(page)
         pp.preformTextSearch(page, 'BT6')

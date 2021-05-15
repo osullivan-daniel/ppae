@@ -1,66 +1,41 @@
 # demo-automation
 
-demo auto showing techniques
-
+Demo with automation techniques
 
 ## Docker Image
-uppae: Ubuntu, python, playwright, allure example
+ppae: python, playwright, allure example
 
 ### Prerequisites
 Install docker
 depending on your installation you may need admin permissions for the following
 
 ### Build a new image
-from the docker directory run:
-docker build . -t uppae
-NOTE - brew is very slow to set up so its worth kicking off the build and coming back after a while
+from the docker directory run (--no-cache as when we rebuild it we want it to pull a fresh copy of the test repo):
+```bash
+docker build . -t ppae --no-cache
+````
 
-### run your new image
-docker run -it uppae
-
-### Next steps
-run the following commands (keygen creates silently with no passphrase)
+### Final set up:
+Start the container (we use privaliged to allow for date manipulation. **NEVER** use it in a prod docker container)
+```bash
+docker run -it --privileged ppae
+````
+Run the following commands (so we can use everything installed by linuxbrew) and add our python helpers to our path
+```bash 
 eval $(~/.linuxbrew/bin/brew shellenv)
-ssh-keygen -f ~/.ssh/id_rsa -q -P ""
-Stick it in you preferred repo and away you go
+export PYTHONPATH=~/ppae/helpers
+```
 
-## Ruinning From Local Machine
+cd into the test dir
+```bash
+cd ppae
+````
 
-### Required Libraries 
+Run either of the following to demo the tests:
+```bash
+./runTestAndDisplayResults.sh
+./runTestAndDisplayResultsHistoryExample.sh
+````
 
-Libraries required to be installed before use:
-
-Please install python3 & pip3
-Please install brew for mac or linux (allure has many dependancies and its the most robust way of installing it)
-
-brew install allure  (brew update && brew upgrade - can be used to update installed packages)
- 
-pip3 install -U pytest  
-pip3 install -U allure-pytest  
-pip3 install -U pytest-playwright
-
-### run and display results script
-
-./runTestAndDisplayResults.sh -> will automatically run the tests and display the allure results
-
-### Aditonal libs
-There is the potability that playwright may ask you to install a couple of extra libs please follow the instructions for that
-
-##Manual running info
-
-### Base Command
-The minimum required to run from the command line::
-
-`python3 -m pytest`
-
-### Optional Flags
-
--k '[module/testcase]' --> run specific module or test cases  
---env [config yml file path] --> config file - Current default is dev  
---alluredir [full path to where you wish to store the files]
--o log_cli=true --> terminal logging even if tests pass
---browser --> firefox webkit (chromium is set in pytest.ini so will always run) NOTE --browser is needed for each additonal browser
---headful --> runs the browser
-
-### View allure reports
-allure serve [full path to where you stored the files] - Should match your --alluredir parm
+### Failing tests
+Intermittently TestBT14PropertiesAvailable or TestBT16PropertiesAvailable might fail where the number of property's available displayed will not equal the count of properties displayed. I suspect its related to highlighted/promoted properties but given its a public web page, where the api calls return html and nothing has ids its a bit of a hard one to nail down without specs and tests designed to take account of the business requirements that the site was designed against
