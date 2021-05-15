@@ -31,7 +31,8 @@ class Test_Faux_Bdd_And_Video:
             assert visible
             page.close()
             page.video.save_as('./.testVidSave/fauxbdd.webm')
-            allure.attach(open('./.testVidSave/fauxbdd.webm', "rb").read(), "vid.webm", "video/webm")
+
+        allure.attach(open('./.testVidSave/fauxbdd.webm', "rb").read(), "vid.webm", "video/webm")
 
 
 

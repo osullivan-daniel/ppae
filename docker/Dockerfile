@@ -1,4 +1,4 @@
-FROM ulppa:latest
+FROM allthegoodonesaregone/ulppa:latest
 
 USER keyserSoze
 

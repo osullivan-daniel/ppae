@@ -1,14 +1,20 @@
 #only works when run in a docker container with privileged access and no sudo setup!!!
-import allure
-import logging
-import time
 import bashHelper
+import logging
+import pytest
+import allure
+import time
+
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 class Test_Time_Date_Stuff:
 
+    # Skipped for the time turning out to be a little more complicated. the logic of disabling clock update,
+    # changing hte clock mid test and once done renable auto sync is solid its just trying to find a way to securely do it!
+    # on mac this may work: https://github.com/docker/for-mac/issues/2979
+    @pytest.mark.skip('systemd as init system issue when running ubuntu docker on ubuntu os')
     @allure.description("The date time is not what you expected......")
     def test_Time_Date_Stuff(self, context):
 
