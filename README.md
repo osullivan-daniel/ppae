@@ -39,3 +39,12 @@ Run either of the following to demo the tests:
 
 ### Failing tests
 Intermittently TestBT14PropertiesAvailable or TestBT16PropertiesAvailable might fail where the number of property's available displayed will not equal the count of properties displayed. I suspect its related to highlighted/promoted properties but given its a public web page, where the api calls return html and nothing has ids its a bit of a hard one to nail down without specs and tests designed to take account of the business requirements that the site was designed against
+
+### Next improvements
+Multiple browsers - Playwright is designed to create one single browser for the tests and create individual contexts for each test, for resource and speed purposes. Currently the tests are creating a browser each. Investigate a solution for this (most likely a pytest scoped session browser.)
+
+Parallelism - pytest-parallel breaks the allure reports, investigating the code shows no obvious reason for this. Try xdist. If the same issues persist try running the tests with different browsers at the same time using bash.
+
+Slow-mo -  a headed slowmo demo would be worth showing.
+
+Multiple contexts - a basic chat app could be used to demo this - will require finding or writing one but its an interesting and powerful feature worth demo-ing
